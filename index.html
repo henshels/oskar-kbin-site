@@ -3,580 +3,758 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Oskar Kbin</title>
+<title>Oskar Käbin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #ffffff;
-    --bg-dark: #000000;
-    --bg-soft: #f5f5f7;
-    --fg: #1d1d1f;
-    --fg-dark: #f5f5f7;
-    --muted: #6e6e73;
-    --accent: #0071e3;
-    --border: #d2d2d7;
+    --bg: #0a0a0a;
+    --bg-2: #111111;
+    --bg-3: #1a1a1a;
+    --fg: #f5f5f5;
+    --fg-dim: #a3a3a3;
+    --fg-mute: #525252;
+    --line: rgba(255, 255, 255, 0.08);
+    --accent: #ff5500;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; background: var(--bg); }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--fg);
-    line-height: 1.47;
+    line-height: 1.4;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection { background: var(--accent); color: #fff; }
+
+  .mono { font-family: 'Geist Mono', monospace; }
+  .serif { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+
+  /* Noise texture */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
+  /* Nav */
   nav {
-    position: sticky;
-    top: 0;
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 100;
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    background: rgba(255, 255, 255, 0.72);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    height: 48px;
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 10px 20px;
     display: flex;
+    gap: 4px;
     align-items: center;
-    justify-content: center;
+    font-size: 13px;
   }
-  nav .nav-inner {
-    width: 100%;
-    max-width: 1024px;
-    padding: 0 22px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
+  nav .brand {
+    font-weight: 600;
+    padding: 6px 14px;
     color: var(--fg);
+    letter-spacing: -0.02em;
+  }
+  nav .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin: 0 8px;
   }
   nav a {
-    color: var(--fg);
+    color: var(--fg-dim);
     text-decoration: none;
-    opacity: 0.85;
-    font-size: 12px;
-    transition: opacity 0.2s;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    transition: color 0.2s, background 0.2s;
   }
-  nav a:hover { opacity: 1; }
-  nav .links { display: flex; gap: 28px; }
-  nav .brand { font-weight: 600; font-size: 14px; }
+  nav a:hover {
+    color: var(--fg);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  @media (max-width: 640px) {
+    nav .nav-link-extra { display: none; }
+  }
 
-  .section {
-    padding: 96px 22px;
-    text-align: center;
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 80px 32px;
     overflow: hidden;
+    background: var(--bg);
   }
-  .section-dark {
-    background: var(--bg-dark);
-    color: var(--fg-dark);
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
-  .section-soft { background: var(--bg-soft); }
-
-  .container { max-width: 980px; margin: 0 auto; }
-  .narrow { max-width: 700px; margin: 0 auto; }
-
-  .eyebrow {
-    font-size: 21px;
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: -0.01em;
-    margin-bottom: 8px;
+  .hero-bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    filter: brightness(0.5) contrast(1.05);
   }
-  .section-dark .eyebrow { color: #2997ff; }
-
-  h1 {
-    font-size: clamp(48px, 9vw, 96px);
+  .hero-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10, 10, 10, 0.4) 0%, transparent 30%, transparent 50%, rgba(10, 10, 10, 0.95) 100%),
+      radial-gradient(circle at 70% 50%, transparent 0%, rgba(10, 10, 10, 0.6) 100%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 32px;
+    font-size: 13px;
+    color: var(--fg-dim);
+    letter-spacing: 0.04em;
+  }
+  .hero-meta .mono { text-transform: uppercase; }
+  .hero-meta .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .hero-meta .badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+  }
+  .hero h1 {
+    font-size: clamp(80px, 18vw, 280px);
     font-weight: 700;
-    letter-spacing: -0.045em;
-    line-height: 1.05;
+    letter-spacing: -0.06em;
+    line-height: 0.85;
+    margin-bottom: 24px;
+  }
+  .hero h1 .serif {
+    color: var(--fg-dim);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  .hero-sub {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 32px;
+    max-width: 100%;
+  }
+  .hero-tagline {
+    font-size: clamp(18px, 1.6vw, 22px);
+    color: var(--fg-dim);
+    max-width: 480px;
+    line-height: 1.5;
+  }
+  .hero-tagline em { color: var(--fg); font-style: normal; }
+  .scroll-indicator {
+    font-size: 11px;
+    color: var(--fg-mute);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .scroll-indicator::before {
+    content: "";
+    width: 40px;
+    height: 1px;
+    background: var(--fg-mute);
+  }
+
+  /* Marquee */
+  .marquee {
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+    padding: 24px 0;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 80px;
+    white-space: nowrap;
+    animation: scroll 30s linear infinite;
+    width: max-content;
+  }
+  .marquee span {
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--fg);
+  }
+  .marquee span:nth-child(even) {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--fg-mute);
+  }
+  .marquee .star {
+    color: var(--accent);
+    -webkit-text-stroke: 0;
+    font-family: 'Instrument Serif', serif;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Section base */
+  section.section {
+    padding: 140px 32px;
+    position: relative;
+  }
+  .container { max-width: 1400px; margin: 0 auto; }
+
+  .label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-family: 'Geist Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-dim);
+    margin-bottom: 32px;
+  }
+  .label::before {
+    content: "";
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h2.display {
+    font-size: clamp(48px, 8vw, 128px);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 0.95;
+    margin-bottom: 32px;
+  }
+  h2.display .serif {
+    color: var(--fg-dim);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  /* Bento grid */
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 200px;
+    gap: 12px;
+    margin-top: 64px;
+  }
+  .cell {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 32px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+  }
+  .cell:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+  .cell.span-2 { grid-column: span 2; }
+  .cell.span-3 { grid-column: span 3; }
+  .cell.span-4 { grid-column: span 4; }
+  .cell.row-2 { grid-row: span 2; }
+
+  .cell .cell-label {
+    font-size: 11px;
+    font-family: 'Geist Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-mute);
     margin-bottom: 12px;
   }
-  h2 {
-    font-size: clamp(40px, 6vw, 72px);
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 1.07;
-    margin-bottom: 16px;
-  }
-  h3 {
-    font-size: clamp(28px, 3vw, 40px);
+  .cell h3 {
+    font-size: clamp(22px, 2vw, 32px);
     font-weight: 600;
     letter-spacing: -0.03em;
     line-height: 1.1;
     margin-bottom: 12px;
   }
-
-  .lede {
-    font-size: clamp(21px, 2.4vw, 28px);
-    color: var(--muted);
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 1.4;
-    margin-bottom: 32px;
+  .cell p {
+    font-size: 15px;
+    color: var(--fg-dim);
+    line-height: 1.5;
   }
-  .section-dark .lede { color: #a1a1a6; }
-
-  p.body {
-    font-size: 19px;
-    color: var(--fg);
-    margin-bottom: 16px;
-  }
-  .section-dark p.body { color: var(--fg-dark); }
-
-  .cta-row {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin-top: 24px;
-    flex-wrap: wrap;
-  }
-  .cta {
-    color: var(--accent);
-    font-size: 17px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: opacity 0.2s;
-  }
-  .cta:hover { opacity: 0.7; }
-  .cta::after { content: "›"; font-size: 20px; transform: translateY(-1px); }
-  .section-dark .cta { color: #2997ff; }
-
-  /* Hero */
-  .hero {
-    min-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 22px 80px;
-    background: linear-gradient(180deg, #fafafa 0%, #ffffff 100%);
-  }
-  .hero h1 {
-    font-size: clamp(64px, 12vw, 140px);
-    font-weight: 700;
-  }
-  .hero .product-shot {
-    width: clamp(260px, 38vw, 420px);
-    aspect-ratio: 3 / 4;
-    border-radius: 32px;
-    margin: 56px auto 0;
-    overflow: hidden;
-    box-shadow:
-      0 40px 100px rgba(0, 0, 0, 0.25),
-      0 8px 24px rgba(0, 0, 0, 0.1);
-    background: #f5f5f7;
-  }
-  .hero .product-shot img {
+  .cell.photo { padding: 0; }
+  .cell.photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
+    object-position: center 25%;
   }
-
-  /* Gallery */
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-top: 56px;
-  }
-  .gallery .photo {
-    aspect-ratio: 3 / 4;
-    border-radius: 28px;
-    overflow: hidden;
-    background: #1d1d1f;
-    position: relative;
-    transition: transform 0.5s ease, box-shadow 0.5s ease;
-  }
-  .gallery .photo:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-  }
-  .gallery .photo img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .gallery .photo .caption {
+  .cell.photo .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 32px 28px;
-    color: #ffffff;
-    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
-    text-align: left;
+    padding: 24px;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
   }
-  .gallery .photo .caption .label {
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.8;
-    margin-bottom: 4px;
-  }
-  .gallery .photo .caption h3 {
-    font-size: 28px;
-    font-weight: 600;
-    margin-bottom: 0;
-    color: #ffffff;
-  }
-  @media (max-width: 734px) {
-    .gallery { grid-template-columns: 1fr; }
-  }
+  .cell.photo .overlay .cell-label { color: rgba(255, 255, 255, 0.7); }
+  .cell.photo h3 { color: #fff; margin: 0; }
 
-  /* Split */
-  .split {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 64px;
-    align-items: center;
-    text-align: left;
-    margin-top: 48px;
+  .cell.huge-num {
+    background: var(--bg-2);
+    align-items: flex-start;
   }
-  .split .photo-col {
-    aspect-ratio: 3 / 4;
-    border-radius: 28px;
-    overflow: hidden;
-  }
-  .split .photo-col img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .split h2 { text-align: left; }
-  @media (max-width: 734px) {
-    .split { grid-template-columns: 1fr; gap: 32px; text-align: center; }
-    .split h2 { text-align: center; }
-  }
-
-  /* Feature grid */
-  .features {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-top: 48px;
-  }
-  .feature-card {
-    background: var(--bg-soft);
-    border-radius: 28px;
-    padding: 56px 40px;
-    text-align: left;
-    min-height: 460px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    transition: transform 0.4s ease;
-  }
-  .section-dark .feature-card {
-    background: #1d1d1f;
-  }
-  .feature-card:hover { transform: translateY(-4px); }
-  .feature-card .label {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  .section-dark .feature-card .label { color: #2997ff; }
-  .feature-card h3 { margin-bottom: 8px; }
-  .feature-card p {
-    font-size: 17px;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-  .section-dark .feature-card p { color: #a1a1a6; }
-  .feature-card .icon {
-    font-size: 80px;
-    margin-bottom: 24px;
-    line-height: 1;
-  }
-
-  @media (max-width: 734px) {
-    .features { grid-template-columns: 1fr; }
-    .feature-card { min-height: 380px; padding: 40px 28px; }
-  }
-
-  /* Stats */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-top: 64px;
-  }
-  .stat .num {
-    font-size: clamp(48px, 6vw, 80px);
+  .cell.huge-num .num {
+    font-size: clamp(80px, 8vw, 140px);
     font-weight: 700;
-    letter-spacing: -0.04em;
-    line-height: 1;
-    color: var(--accent);
-    margin-bottom: 8px;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+    background: linear-gradient(180deg, var(--fg) 0%, var(--fg-dim) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  .section-dark .stat .num { color: #2997ff; }
-  .stat .label {
-    font-size: 17px;
-    color: var(--muted);
-    font-weight: 400;
+  .cell.accent {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
   }
-  .section-dark .stat .label { color: #a1a1a6; }
-  @media (max-width: 734px) {
-    .stats { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .cell.accent p, .cell.accent .cell-label { color: rgba(255, 255, 255, 0.85); }
+  .cell.accent .cell-label::before { background: #fff; }
+
+  @media (max-width: 900px) {
+    .bento { grid-template-columns: repeat(2, 1fr); }
+    .cell.span-2 { grid-column: span 2; }
+    .cell.span-3 { grid-column: span 2; }
+    .cell.span-4 { grid-column: span 2; }
   }
 
   /* Quote */
-  .quote-block {
-    padding: 120px 22px;
-    text-align: center;
+  .quote {
+    padding: 200px 32px;
+    text-align: left;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
   }
-  .quote-block blockquote {
-    font-size: clamp(28px, 4vw, 48px);
+  .quote blockquote {
+    font-size: clamp(40px, 6vw, 96px);
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    max-width: 1100px;
+  }
+  .quote blockquote .serif { color: var(--fg-dim); }
+  .quote .author {
+    margin-top: 48px;
+    font-size: 13px;
+    color: var(--fg-mute);
+    font-family: 'Geist Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* Gallery */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 12px;
+    margin-top: 64px;
+  }
+  .gallery-item {
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--bg-2);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .gallery-item:hover { transform: scale(1.02); }
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.4s ease, transform 0.6s ease;
+  }
+  .gallery-item:hover img {
+    filter: brightness(1.1);
+    transform: scale(1.04);
+  }
+  .gallery-item .meta {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  }
+  .gallery-item .title {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    font-size: 22px;
     font-weight: 600;
-    letter-spacing: -0.03em;
-    line-height: 1.2;
-    max-width: 900px;
-    margin: 0 auto 24px;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
   }
-  .quote-block .author {
-    font-size: 17px;
-    color: var(--muted);
+  .g-1 { grid-column: span 5; aspect-ratio: 3 / 4; }
+  .g-2 { grid-column: span 7; aspect-ratio: 7 / 5.3; }
+  .g-3 { grid-column: span 7; aspect-ratio: 7 / 5.3; }
+  .g-4 { grid-column: span 5; aspect-ratio: 3 / 4; }
+  @media (max-width: 900px) {
+    .gallery-grid { grid-template-columns: 1fr 1fr; }
+    .g-1, .g-2, .g-3, .g-4 { grid-column: span 1; aspect-ratio: 3 / 4; }
+  }
+
+  /* Closing hero */
+  .closing {
+    min-height: 80vh;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+  }
+  .closing h2 {
+    font-size: clamp(80px, 16vw, 240px);
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    line-height: 0.9;
+  }
+  .closing h2 .serif {
+    display: block;
+    font-size: 0.4em;
+    color: var(--fg-dim);
+    letter-spacing: -0.02em;
+    margin-top: 16px;
   }
 
   /* Footer */
   footer {
-    background: var(--bg-soft);
-    padding: 32px 22px;
-    text-align: center;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--line);
+    padding: 64px 32px 48px;
   }
-  footer p {
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.5;
+  footer .footer-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 32px;
   }
   footer .footer-brand {
-    font-size: 13px;
-    color: var(--fg);
-    font-weight: 500;
-    margin-bottom: 8px;
+    font-size: clamp(40px, 6vw, 80px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
   }
+  footer .footer-meta {
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-mute);
+    text-align: right;
+  }
+  footer .footer-meta div { margin-bottom: 4px; }
 
   /* Reveal */
   .reveal {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transform: translateY(32px);
+    transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .reveal.visible {
     opacity: 1;
     transform: translateY(0);
   }
+  .reveal.delay-1 { transition-delay: 0.1s; }
+  .reveal.delay-2 { transition-delay: 0.2s; }
+  .reveal.delay-3 { transition-delay: 0.3s; }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-inner">
-    <span class="brand">Oskar Kbin</span>
-    <div class="links">
-      <a href="#about">About</a>
-      <a href="#features">Why we like him</a>
-      <a href="#stats">Numbers</a>
-      <a href="#quote">Reviews</a>
-      <a href="#gallery">Gallery</a>
-    </div>
-  </div>
+  <span class="brand">Käbin<span style="color: var(--accent);">.</span></span>
+  <span class="dot"></span>
+  <a href="#about">About</a>
+  <a href="#manifest" class="nav-link-extra">Manifest</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#quote" class="nav-link-extra">Words</a>
 </nav>
 
 <!-- Hero -->
-<section class="hero">
-  <div class="eyebrow reveal">Introducing</div>
-  <h1 class="reveal">Oskar Kbin.</h1>
-  <p class="lede reveal">A friend, reimagined.</p>
-  <div class="cta-row reveal">
-    <a class="cta" href="#features">Learn more</a>
-    <a class="cta" href="#quote">Watch the reviews</a>
+<header class="hero">
+  <div class="hero-bg">
+    <img src="images/oskar-1.jpg" alt="" />
   </div>
-  <div class="product-shot reveal">
-    <img src="images/oskar-1.jpg" alt="Oskar Kbin" />
+  <div class="hero-content">
+    <div class="hero-meta reveal">
+      <span class="badge mono">Live · 2026</span>
+      <span class="mono">Vol. 01 / Tribute Edition</span>
+    </div>
+    <h1 class="reveal delay-1">
+      Oskar<br/>
+      <span class="serif">the</span> Käbin<span style="color: var(--accent);">.</span>
+    </h1>
+    <div class="hero-sub">
+      <p class="hero-tagline reveal delay-2">
+        A study in <em>loyalty</em>, <em>timing</em>, and the kind of presence you can't manufacture. <span class="serif">One of one.</span>
+      </p>
+      <span class="scroll-indicator reveal delay-3">Scroll</span>
+    </div>
   </div>
-</section>
+</header>
 
-<!-- Section: meet -->
-<section class="section section-dark" id="about">
+<!-- Marquee -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>LOYAL</span><span class="star">✦</span>
+    <span>FUNNY</span><span class="star">✦</span>
+    <span>UNREPLACEABLE</span><span class="star">✦</span>
+    <span>LEGEND</span><span class="star">✦</span>
+    <span>OSKAR KÄBIN</span><span class="star">✦</span>
+    <span>LOYAL</span><span class="star">✦</span>
+    <span>FUNNY</span><span class="star">✦</span>
+    <span>UNREPLACEABLE</span><span class="star">✦</span>
+    <span>LEGEND</span><span class="star">✦</span>
+    <span>OSKAR KÄBIN</span><span class="star">✦</span>
+  </div>
+</div>
+
+<!-- Manifest / Bento -->
+<section class="section" id="manifest">
   <div class="container">
-    <div class="split">
-      <div class="photo-col reveal">
+    <div class="label reveal">// 01 — Manifest</div>
+    <h2 class="display reveal delay-1">
+      Six things <span class="serif">about him</span><br/>
+      that explain everything.
+    </h2>
+
+    <div class="bento">
+      <div class="cell span-2 row-2 photo reveal">
         <img src="images/oskar-2.jpg" alt="Oskar" />
+        <div class="overlay">
+          <div class="cell-label">Subject</div>
+          <h3>The man himself.</h3>
+        </div>
       </div>
-      <div>
-        <div class="eyebrow reveal">Meet Oskar</div>
-        <h2 class="reveal">Built different.<br/>From the ground up.</h2>
-        <p class="lede reveal">Every element — the timing, the loyalty, the inexplicable ability to find a good restaurant at 11 PM — refined to create something genuinely rare.</p>
-        <div class="cta-row reveal" style="justify-content: flex-start;">
-          <a class="cta" href="#features">See what makes him different</a>
+
+      <div class="cell span-2 reveal delay-1">
+        <div>
+          <div class="cell-label">01 / Loyalty</div>
+          <h3>2 AM phone call. <span class="serif">Answered.</span></h3>
+        </div>
+        <p>Shows up with snacks. Doesn't ask why. Stays as long as it takes.</p>
+      </div>
+
+      <div class="cell span-2 accent reveal delay-2">
+        <div>
+          <div class="cell-label">02 / Humor</div>
+          <h3>One sentence. Whole table laughing.</h3>
+        </div>
+        <p>Engineered comedic timing. No notes.</p>
+      </div>
+
+      <div class="cell span-2 reveal">
+        <div>
+          <div class="cell-label">03 / Memory</div>
+          <h3>He remembers <span class="serif">everything</span>.</h3>
+        </div>
+        <p>That offhand comment from six months ago — he brings it back at the perfect moment.</p>
+      </div>
+
+      <div class="cell span-2 huge-num reveal delay-1">
+        <div class="cell-label">04 / Composure</div>
+        <div>
+          <div class="num">0</div>
+          <p style="margin-top: 12px;">drama. Pressure-tested. Calm by design.</p>
+        </div>
+      </div>
+
+      <div class="cell span-3 reveal">
+        <div>
+          <div class="cell-label">05 / Loyalty Pro</div>
+          <h3>In your corner before you knew you needed someone there.</h3>
+        </div>
+        <p>Always-on protection. Background process.</p>
+      </div>
+
+      <div class="cell span-3 photo reveal delay-1">
+        <img src="images/oskar-3.jpg" alt="Oskar" />
+        <div class="overlay">
+          <div class="cell-label">06 / The vibe</div>
+          <h3>Walks in. Atmosphere upgrades.</h3>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Gallery -->
-<section class="section" id="gallery">
+<!-- Stats / About -->
+<section class="section" id="about" style="border-top: 1px solid var(--line);">
   <div class="container">
-    <div class="eyebrow reveal">In the wild</div>
-    <h2 class="reveal">The Oskar collection.</h2>
-    <p class="lede reveal narrow">Documented sightings of a rare and beloved species.</p>
+    <div class="label reveal">// 02 — Performance specs</div>
+    <h2 class="display reveal delay-1">
+      <span class="serif">Independently</span> verified.<br/>
+      Mostly by people who love him.
+    </h2>
 
-    <div class="gallery">
-      <div class="photo reveal">
-        <img src="images/oskar-1.jpg" alt="Oskar contemplating" />
-        <div class="caption">
-          <div class="label">Exhibit A</div>
-          <h3>The Thinker.</h3>
-        </div>
-      </div>
-      <div class="photo reveal">
-        <img src="images/oskar-2.jpg" alt="Oskar candid" />
-        <div class="caption">
-          <div class="label">Exhibit B</div>
-          <h3>The Classic.</h3>
-        </div>
-      </div>
-      <div class="photo reveal">
-        <img src="images/oskar-3.jpg" alt="Oskar style" />
-        <div class="caption">
-          <div class="label">Exhibit C</div>
-          <h3>The Icon.</h3>
-        </div>
-      </div>
-      <div class="photo reveal">
-        <img src="images/oskar-4.jpg" alt="Oskar mood" />
-        <div class="caption">
-          <div class="label">Exhibit D</div>
-          <h3>The Mood.</h3>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Features -->
-<section class="section section-soft" id="features">
-  <div class="container">
-    <div class="eyebrow reveal">Why we like him</div>
-    <h2 class="reveal">A lot.<br/>Like, a lot a lot.</h2>
-
-    <div class="features">
-      <div class="feature-card reveal">
+    <div class="bento" style="margin-top: 80px;">
+      <div class="cell span-3 huge-num reveal">
+        <div class="cell-label">Loyalty index</div>
         <div>
-          <div class="icon">🤝</div>
-          <div class="label">Loyalty</div>
-          <h3>Shows up.<br/>Every time.</h3>
+          <div class="num">100<span style="font-size: 0.4em; color: var(--fg-dim);">%</span></div>
+          <p style="margin-top: 12px;">Across every metric. Every category. Every test.</p>
         </div>
-        <p>The friend you call at 2 AM. Arrives in 20 minutes. Brings snacks. Doesn't ask why.</p>
       </div>
-
-      <div class="feature-card reveal">
+      <div class="cell span-3 huge-num reveal delay-1">
+        <div class="cell-label">Humor rating</div>
         <div>
-          <div class="icon">😂</div>
-          <div class="label">Humor</div>
-          <h3>One-line genius.</h3>
+          <div class="num">98<span style="font-size: 0.4em; color: var(--fg-dim);">%</span></div>
+          <p style="margin-top: 12px;">The 2% is when he's tired. Still funnier than most people awake.</p>
         </div>
-        <p>Says one sentence. Whole table down for ten minutes. Engineered for impact.</p>
       </div>
-
-      <div class="feature-card reveal">
+      <div class="cell span-2 huge-num reveal">
+        <div class="cell-label">Vibes</div>
         <div>
-          <div class="icon">🎯</div>
-          <div class="label">Memory</div>
-          <h3>Remembers everything.</h3>
+          <div class="num">10<span style="font-size: 0.4em; color: var(--fg-dim);">/10</span></div>
         </div>
-        <p>That thing you mentioned six months ago? He brings it up at exactly the right moment.</p>
       </div>
-
-      <div class="feature-card reveal">
+      <div class="cell span-2 accent huge-num reveal delay-1">
+        <div class="cell-label">Bad takes</div>
         <div>
-          <div class="icon">🌊</div>
-          <div class="label">Composure</div>
-          <h3>Calm by design.</h3>
+          <div class="num" style="background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.7) 100%); -webkit-background-clip: text; background-clip: text;">3<span style="font-size: 0.4em; opacity: 0.7;">%</span></div>
+          <p style="margin-top: 12px;">Statistical noise. Move on.</p>
         </div>
-        <p>Zero drama. Never makes a problem bigger than it has to be. Pressure-tested.</p>
       </div>
-
-      <div class="feature-card reveal">
+      <div class="cell span-2 huge-num reveal delay-2">
+        <div class="cell-label">Of him</div>
         <div>
-          <div class="icon">🛡️</div>
-          <div class="label">Loyalty Pro</div>
-          <h3>In your corner.</h3>
+          <div class="num">1</div>
+          <p style="margin-top: 12px;">Worldwide. No reissues planned.</p>
         </div>
-        <p>Has your back before you knew you needed someone there. Always-on protection.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <div>
-          <div class="icon">✨</div>
-          <div class="label">The vibe</div>
-          <h3>Improves any room.</h3>
-        </div>
-        <p>Walks in. Atmosphere upgrades. No further explanation has ever been required.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Stats -->
-<section class="section section-dark" id="stats">
-  <div class="container">
-    <div class="eyebrow reveal">By the numbers</div>
-    <h2 class="reveal">The performance specs.</h2>
-    <p class="lede reveal narrow">Independently verified by friends, family, and one slightly biased dog.</p>
-
-    <div class="stats">
-      <div class="stat reveal">
-        <div class="num">100%</div>
-        <div class="label">Loyalty</div>
-      </div>
-      <div class="stat reveal">
-        <div class="num">98%</div>
-        <div class="label">Humor rating</div>
-      </div>
-      <div class="stat reveal">
-        <div class="num">10/10</div>
-        <div class="label">Vibes</div>
-      </div>
-      <div class="stat reveal">
-        <div class="num">3%</div>
-        <div class="label">Bad takes</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Quote -->
-<section class="quote-block" id="quote">
+<section class="quote" id="quote">
   <div class="container">
-    <div class="eyebrow reveal">Reviews</div>
-    <blockquote class="reveal">"Best dude I know. Don't @ me."</blockquote>
-    <p class="author reveal">— Literally everyone who has met him</p>
+    <div class="label reveal">// 03 — On the record</div>
+    <blockquote class="reveal delay-1">
+      <span class="serif">"Best dude</span> I know.<br/>
+      Don't <span class="serif">@ me."</span>
+    </blockquote>
+    <div class="author reveal delay-2">— Literally everyone who has met him</div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section class="section" id="gallery">
+  <div class="container">
+    <div class="label reveal">// 04 — Field documentation</div>
+    <h2 class="display reveal delay-1">
+      Sightings.<br/>
+      <span class="serif">In the wild.</span>
+    </h2>
+
+    <div class="gallery-grid">
+      <div class="gallery-item g-1 reveal">
+        <img src="images/oskar-1.jpg" alt="Oskar" />
+        <div class="meta"><span>EX. 01</span><span>04:30 PM</span></div>
+        <div class="title">The Thinker.</div>
+      </div>
+      <div class="gallery-item g-2 reveal delay-1">
+        <img src="images/oskar-2.jpg" alt="Oskar" />
+        <div class="meta"><span>EX. 02</span><span>—</span></div>
+        <div class="title">The Classic.</div>
+      </div>
+      <div class="gallery-item g-3 reveal">
+        <img src="images/oskar-3.jpg" alt="Oskar" />
+        <div class="meta"><span>EX. 03</span><span>—</span></div>
+        <div class="title">The Icon.</div>
+      </div>
+      <div class="gallery-item g-4 reveal delay-1">
+        <img src="images/oskar-4.jpg" alt="Oskar" />
+        <div class="meta"><span>EX. 04</span><span>—</span></div>
+        <div class="title">The Mood.</div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- Closing -->
-<section class="section">
-  <div class="container">
-    <h2 class="reveal">Oskar Kbin.</h2>
-    <p class="lede reveal">There's only one.</p>
-  </div>
+<section class="closing">
+  <h2 class="reveal">
+    Oskar<br/>Käbin<span style="color: var(--accent);">.</span>
+    <span class="serif">there's only one.</span>
+  </h2>
 </section>
 
 <footer>
-  <p class="footer-brand">A tribute site for Oskar Kbin</p>
-  <p>Made with care · 2026 · Not affiliated with any actual technology company</p>
+  <div class="footer-inner">
+    <div class="footer-brand reveal">
+      Käbin<span style="color: var(--accent);">.</span>
+    </div>
+    <div class="footer-meta reveal delay-1">
+      <div>Tribute · Vol. 01</div>
+      <div>Built with care · 2026</div>
+      <div>One of one</div>
+    </div>
+  </div>
 </footer>
 
 <script>
@@ -587,7 +765,7 @@
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 
