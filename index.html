@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Oskar Kbin — Legend Among Men</title>
+<style>
+  :root {
+    --bg: #0b0b14;
+    --bg-2: #15152a;
+    --fg: #f5f1e8;
+    --accent: #ffcb47;
+    --accent-2: #ff5e7a;
+    --muted: #b9b3a4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 800px at 20% 10%, #1a1a35 0%, var(--bg) 60%) fixed;
+    color: var(--fg);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: var(--accent); }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+  }
+  .badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 10vw, 8rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    background: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 1.5rem;
+  }
+  .hero p.tagline {
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    max-width: 720px;
+    color: var(--muted);
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    animation: bob 2s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  section {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  section h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+  }
+  section p {
+    font-size: 1.15rem;
+    color: var(--fg);
+    margin-bottom: 1rem;
+  }
+
+  .reasons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .card {
+    background: var(--bg-2);
+    border: 1px solid #2a2a45;
+    border-radius: 16px;
+    padding: 1.75rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+  .card .num {
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .card p {
+    font-size: 1rem;
+    color: var(--muted);
+  }
+
+  .meter-section { background: var(--bg-2); border-radius: 24px; padding: 3rem; margin: 2rem auto; }
+  .meter-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .meter-label { width: 140px; font-weight: 600; }
+  .meter {
+    flex: 1;
+    height: 14px;
+    background: #2a2a45;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .meter-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    border-radius: 999px;
+    width: 0;
+    transition: width 1.2s ease;
+  }
+  .meter-value { width: 60px; text-align: right; color: var(--accent); font-weight: 700; }
+
+  .quote {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-style: italic;
+    color: var(--fg);
+    border-left: 4px solid var(--accent);
+    padding: 1rem 2rem;
+    margin: 2rem 0;
+  }
+  .quote-attr { display: block; font-size: 1rem; color: var(--muted); margin-top: 1rem; font-style: normal; }
+
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted);
+    border-top: 1px solid #2a2a45;
+  }
+  footer .heart { color: var(--accent-2); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="badge">Tribute Site · Est. 2026</span>
+  <h1>Oskar Kbin</h1>
+  <p class="tagline">Friend. Icon. Walking proof that one human can hold this much vibe at once.</p>
+  <div class="scroll-hint">Scroll for receipts ↓</div>
+</header>
+
+<section>
+  <h2>Who is Oskar?</h2>
+  <p>Oskar Kbin is the person you call when the plan falls apart and you need someone who will laugh first and fix it second. He shows up on time, stays too late, and somehow always knows the better restaurant.</p>
+  <p>If you've met him, you already know. If you haven't — sorry.</p>
+</section>
+
+<section>
+  <h2>Why we like him (a lot)</h2>
+  <div class="reasons">
+    <div class="card">
+      <div class="num">Reason 01</div>
+      <h3>Loyal as hell</h3>
+      <p>The kind of friend who answers a 2 AM call and shows up with snacks.</p>
+    </div>
+    <div class="card">
+      <div class="num">Reason 02</div>
+      <h3>Funny without trying</h3>
+      <p>Says one sentence. Whole table down for ten minutes.</p>
+    </div>
+    <div class="card">
+      <div class="num">Reason 03</div>
+      <h3>Actually listens</h3>
+      <p>Remembers the thing you mentioned six months ago. Brings it up at the right moment.</p>
+    </div>
+    <div class="card">
+      <div class="num">Reason 04</div>
+      <h3>Zero drama</h3>
+      <p>Calm under pressure. Never makes a problem bigger than it has to be.</p>
+    </div>
+    <div class="card">
+      <div class="num">Reason 05</div>
+      <h3>Backs his people</h3>
+      <p>Has your corner before you knew you needed someone in it.</p>
+    </div>
+    <div class="card">
+      <div class="num">Reason 06</div>
+      <h3>The vibe</h3>
+      <p>Walks into a room. Room improves. No further explanation available.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Oskar by the numbers</h2>
+  <div class="meter-section">
+    <div class="meter-row">
+      <span class="meter-label">Loyalty</span>
+      <div class="meter"><div class="meter-fill" data-value="100"></div></div>
+      <span class="meter-value">100%</span>
+    </div>
+    <div class="meter-row">
+      <span class="meter-label">Humor</span>
+      <div class="meter"><div class="meter-fill" data-value="98"></div></div>
+      <span class="meter-value">98%</span>
+    </div>
+    <div class="meter-row">
+      <span class="meter-label">Reliability</span>
+      <div class="meter"><div class="meter-fill" data-value="99"></div></div>
+      <span class="meter-value">99%</span>
+    </div>
+    <div class="meter-row">
+      <span class="meter-label">Vibes</span>
+      <div class="meter"><div class="meter-fill" data-value="100"></div></div>
+      <span class="meter-value">100%</span>
+    </div>
+    <div class="meter-row">
+      <span class="meter-label">Bad takes</span>
+      <div class="meter"><div class="meter-fill" data-value="3"></div></div>
+      <span class="meter-value">3%</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Testimonials</h2>
+  <blockquote class="quote">
+    "Best dude I know. Don't @ me."
+    <span class="quote-attr">— literally everyone who has met him</span>
+  </blockquote>
+  <blockquote class="quote">
+    "If Oskar says it's a good idea, it's a good idea. If Oskar says it's a bad idea, run."
+    <span class="quote-attr">— ancient proverb (made up just now)</span>
+  </blockquote>
+</section>
+
+<footer>
+  Built with <span class="heart">♥</span> for Oskar Kbin · 2026
+</footer>
+
+<script>
+  const fills = document.querySelectorAll('.meter-fill');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.width = entry.target.dataset.value + '%';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  fills.forEach(f => observer.observe(f));
+</script>
+
+</body>
+</html>
