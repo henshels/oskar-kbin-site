@@ -158,26 +158,99 @@
     font-weight: 700;
   }
   .hero .product-shot {
-    width: clamp(220px, 40vw, 360px);
-    height: clamp(220px, 40vw, 360px);
-    border-radius: 50%;
-    margin: 48px auto 0;
-    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #f0f0f3 30%, #c7c7cc 80%, #8e8e93 100%);
+    width: clamp(260px, 38vw, 420px);
+    aspect-ratio: 3 / 4;
+    border-radius: 32px;
+    margin: 56px auto 0;
+    overflow: hidden;
     box-shadow:
-      0 30px 80px rgba(0, 0, 0, 0.2),
-      inset -20px -20px 60px rgba(0, 0, 0, 0.1);
-    position: relative;
+      0 40px 100px rgba(0, 0, 0, 0.25),
+      0 8px 24px rgba(0, 0, 0, 0.1);
+    background: #f5f5f7;
   }
-  .hero .product-shot::before {
-    content: "OK";
+  .hero .product-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Gallery */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 56px;
+  }
+  .gallery .photo {
+    aspect-ratio: 3 / 4;
+    border-radius: 28px;
+    overflow: hidden;
+    background: #1d1d1f;
+    position: relative;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+  .gallery .photo:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  }
+  .gallery .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .gallery .photo .caption {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: clamp(72px, 14vw, 120px);
-    font-weight: 700;
-    color: #1d1d1f;
-    letter-spacing: -0.05em;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 32px 28px;
+    color: #ffffff;
+    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+    text-align: left;
+  }
+  .gallery .photo .caption .label {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 4px;
+  }
+  .gallery .photo .caption h3 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 0;
+    color: #ffffff;
+  }
+  @media (max-width: 734px) {
+    .gallery { grid-template-columns: 1fr; }
+  }
+
+  /* Split */
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+    text-align: left;
+    margin-top: 48px;
+  }
+  .split .photo-col {
+    aspect-ratio: 3 / 4;
+    border-radius: 28px;
+    overflow: hidden;
+  }
+  .split .photo-col img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .split h2 { text-align: left; }
+  @media (max-width: 734px) {
+    .split { grid-template-columns: 1fr; gap: 32px; text-align: center; }
+    .split h2 { text-align: center; }
   }
 
   /* Feature grid */
@@ -314,6 +387,7 @@
       <a href="#features">Why we like him</a>
       <a href="#stats">Numbers</a>
       <a href="#quote">Reviews</a>
+      <a href="#gallery">Gallery</a>
     </div>
   </div>
 </nav>
@@ -327,17 +401,66 @@
     <a class="cta" href="#features">Learn more</a>
     <a class="cta" href="#quote">Watch the reviews</a>
   </div>
-  <div class="product-shot reveal"></div>
+  <div class="product-shot reveal">
+    <img src="images/oskar-1.jpg" alt="Oskar Kbin" />
+  </div>
 </section>
 
 <!-- Section: meet -->
 <section class="section section-dark" id="about">
   <div class="container">
-    <div class="eyebrow reveal">Meet Oskar</div>
-    <h2 class="reveal">Built different.<br/>From the ground up.</h2>
-    <p class="lede reveal narrow">Every element of Oskar — the timing, the loyalty, the inexplicable ability to find a good restaurant at 11 PM — has been refined to create something genuinely rare.</p>
-    <div class="cta-row reveal">
-      <a class="cta" href="#features">See what makes him different</a>
+    <div class="split">
+      <div class="photo-col reveal">
+        <img src="images/oskar-2.jpg" alt="Oskar" />
+      </div>
+      <div>
+        <div class="eyebrow reveal">Meet Oskar</div>
+        <h2 class="reveal">Built different.<br/>From the ground up.</h2>
+        <p class="lede reveal">Every element — the timing, the loyalty, the inexplicable ability to find a good restaurant at 11 PM — refined to create something genuinely rare.</p>
+        <div class="cta-row reveal" style="justify-content: flex-start;">
+          <a class="cta" href="#features">See what makes him different</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section class="section" id="gallery">
+  <div class="container">
+    <div class="eyebrow reveal">In the wild</div>
+    <h2 class="reveal">The Oskar collection.</h2>
+    <p class="lede reveal narrow">Documented sightings of a rare and beloved species.</p>
+
+    <div class="gallery">
+      <div class="photo reveal">
+        <img src="images/oskar-1.jpg" alt="Oskar contemplating" />
+        <div class="caption">
+          <div class="label">Exhibit A</div>
+          <h3>The Thinker.</h3>
+        </div>
+      </div>
+      <div class="photo reveal">
+        <img src="images/oskar-2.jpg" alt="Oskar candid" />
+        <div class="caption">
+          <div class="label">Exhibit B</div>
+          <h3>The Classic.</h3>
+        </div>
+      </div>
+      <div class="photo reveal">
+        <img src="images/oskar-3.jpg" alt="Oskar style" />
+        <div class="caption">
+          <div class="label">Exhibit C</div>
+          <h3>The Icon.</h3>
+        </div>
+      </div>
+      <div class="photo reveal">
+        <img src="images/oskar-4.jpg" alt="Oskar mood" />
+        <div class="caption">
+          <div class="label">Exhibit D</div>
+          <h3>The Mood.</h3>
+        </div>
+      </div>
     </div>
   </div>
 </section>
