@@ -49,13 +49,12 @@
   /* Nav */
   nav {
     position: fixed;
-    top: 16px;
+    top: 20px;
     left: 50%;
-    transform: translateX(-50%);
     z-index: 100;
-    background: rgba(10, 10, 10, 0.7);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(10, 10, 10, 0.55);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 10px 20px;
@@ -63,6 +62,38 @@
     gap: 4px;
     align-items: center;
     font-size: 13px;
+    transform: translateX(-50%) translateY(-120%);
+    opacity: 0;
+    transition:
+      transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.6s ease,
+      padding 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+      background 0.4s ease,
+      border-color 0.4s ease,
+      box-shadow 0.4s ease;
+  }
+  nav.in {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  nav.scrolled {
+    padding: 6px 14px;
+    background: rgba(10, 10, 10, 0.85);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+  nav.hidden {
+    transform: translateX(-50%) translateY(-150%);
+    opacity: 0;
+  }
+  nav .brand .accent-pulse {
+    color: var(--accent);
+    display: inline-block;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
   }
   nav .brand {
     font-weight: 600;
@@ -278,7 +309,7 @@
   .bento {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    grid-auto-rows: 200px;
+    grid-auto-rows: minmax(260px, auto);
     gap: 12px;
     margin-top: 64px;
   }
@@ -292,6 +323,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    gap: 24px;
+    min-height: 260px;
     transition: transform 0.4s ease, border-color 0.4s ease, background 0.4s ease;
   }
   .cell:hover {
@@ -344,9 +377,10 @@
   .cell.huge-num {
     background: var(--bg-2);
     align-items: flex-start;
+    min-height: 320px;
   }
   .cell.huge-num .num {
-    font-size: clamp(80px, 8vw, 140px);
+    font-size: clamp(72px, 7vw, 128px);
     font-weight: 700;
     letter-spacing: -0.06em;
     line-height: 0.9;
@@ -354,6 +388,10 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    margin-bottom: 16px;
+  }
+  .cell.huge-num p {
+    font-size: 14px;
   }
   .cell.accent {
     background: var(--accent);
@@ -525,8 +563,8 @@
 </head>
 <body>
 
-<nav>
-  <span class="brand">Käbin<span style="color: var(--accent);">.</span></span>
+<nav id="navbar">
+  <span class="brand">Käbin<span class="accent-pulse">.</span></span>
   <span class="dot"></span>
   <a href="#about">About</a>
   <a href="#manifest" class="nav-link-extra">Manifest</a>
@@ -758,6 +796,7 @@
 </footer>
 
 <script>
+  // Reveal on scroll
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -767,6 +806,27 @@
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -10% 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Animated nav: drop-in on load, shrink on scroll, hide on scroll-down, show on scroll-up
+  const nav = document.getElementById('navbar');
+  requestAnimationFrame(() => {
+    setTimeout(() => nav.classList.add('in'), 400);
+  });
+
+  let lastY = 0;
+  let ticking = false;
+  function onScroll() {
+    const y = window.scrollY;
+    if (y > 40) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+    if (y > 200 && y > lastY + 4) nav.classList.add('hidden');
+    else if (y < lastY - 4 || y < 100) nav.classList.remove('hidden');
+    lastY = y;
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+  }, { passive: true });
 </script>
 
 </body>
